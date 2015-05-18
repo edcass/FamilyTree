@@ -13,6 +13,7 @@ class FamilyTree {
     private $currentLine = array();
     private $currentGeneration = 0;
     private $searchedFor = '';
+    private $list = array();
 
     public function __construct($jsonFilePath=false) {
         if ($jsonFilePath) {
@@ -50,9 +51,20 @@ class FamilyTree {
         return $this->runLoop($callback, $this->tree);
     }
 
-    public function getOnlyChildren() {}
+    public function getOnlyChildren() {
 
-    public function getChildfree() {}
+    }
+
+    public function getChildfree() {
+        $callback = function($name, $children) {
+            if (count($children) == 0) {
+                array_push($this->list, $name);
+            }
+            return false;
+        };
+        $this->runLoop($callback, $this->tree);
+        return $this->list;
+    }
 
     public function getMostProlific() {}
 
@@ -83,4 +95,4 @@ class FamilyTree {
 }
 
 $family = new FamilyTree();
-var_dump($family->getGrandParent('Robert'));
+var_dump($family->getChildfree());
