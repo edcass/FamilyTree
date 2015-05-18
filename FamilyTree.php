@@ -37,9 +37,7 @@ class FamilyTree {
         $this->currentLine = array();
         $this->searchedFor = $name;
         $callback = function($name, $children) {
-            echo $name . ' : ' . $this->searchedFor, "\n";
             if ($name == $this->searchedFor) {
-                echo $this->currentLine[count($this->currentLine) - 1]; exit;
                 if (count($this->currentLine) < 2) {
                     throw new Exception($name . ' has no grand parent specified.');
                 } else {
@@ -52,7 +50,16 @@ class FamilyTree {
     }
 
     public function getOnlyChildren() {
+        $this->list = array();
+        $callback = function($name, $children) {
 
+            if (count(array_keys($children)) == 1) {
+                $children = array_keys($children);
+                $this->list[] = $children[0];
+            }
+        };
+        $this->runLoop($callback, $this->tree);
+        return $this->list;
     }
 
     public function getChildfree() {
@@ -95,4 +102,4 @@ class FamilyTree {
 }
 
 $family = new FamilyTree();
-var_dump($family->getChildfree());
+var_dump($family->getOnlyChildren());
