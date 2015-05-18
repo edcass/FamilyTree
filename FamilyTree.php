@@ -135,9 +135,9 @@ class FamilyTree {
 
             $this->parentText[$name] = $text;
 
+            // Cheating a bit here; I should really have figured out a way to use one loop.
             $tree = new FamilyTree($this->jsonFilePath);
             $parent = $tree->getParent($name, $this->tree);
-            echo $name . ': ' . $parent . "\n";
             if ($parent) {
                 FamilyTree::drawLine($this->treeImageSource, $this->parentText[$name], $this->parentText[$parent]);
             }
