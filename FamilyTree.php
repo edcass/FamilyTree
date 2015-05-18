@@ -14,7 +14,6 @@ class FamilyTree {
     private $currentSibling = array();
     private $searchedFor = '';
     private $list = array();
-    private $treeImagePath = '';
     private $treeImageSource;
     private $currentPosition = array('x' => 20, 'y' => 20);
     private $parentText;
