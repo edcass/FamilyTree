@@ -9,11 +9,15 @@
 class FamilyTree {
     private $jsonFilePath = './data/example.json';
     private $tree = array();
-    private $currentLinage = array();
     private $currentLine = array();
     private $currentGeneration = 0;
+    private $currentSibling = 0;
+    private $previousSibling = 0;
     private $searchedFor = '';
     private $list = array();
+    private $treeImagePath = '';
+    private $treeImageSource;
+    private $currentPosition = array('x' => 20, 'y' => 20);
 
     public function __construct($jsonFilePath=false) {
         if ($jsonFilePath) {
@@ -46,7 +50,7 @@ class FamilyTree {
             }
         };
 
-        return $this->runLoop($callback, $this->tree);
+        return $this->runLoop($callback, $this->tree, 0);
     }
 
     public function getOnlyChildren() {
@@ -58,7 +62,7 @@ class FamilyTree {
                 $this->list[] = $children[0];
             }
         };
-        $this->runLoop($callback, $this->tree);
+        $this->runLoop($callback, $this->tree, 0);
         return $this->list;
     }
 
@@ -69,7 +73,7 @@ class FamilyTree {
             }
             return false;
         };
-        $this->runLoop($callback, $this->tree);
+        $this->runLoop($callback, $this->tree, 0);
         return $this->list;
     }
 
@@ -85,19 +89,46 @@ class FamilyTree {
         return $this->list[0];
     }
 
-    public function drawFamilyTree() {}
+    public function drawFamilyTree() {
+        require_once('./lib/phpsvg-read-only/svglib/svglib.php');
+        $filename = './images/' . uniqid() . '.svg'; // make sure you don't have file name collisions.
+        $filename = './images/test.svg';
+        //unlink($filename);
+        $this->treeImageSource = SVGDocument::getInstance();
 
-    private function runLoop($callback, $lineage) {
+
+        $callback = function($name, $children, $previousSibling) {
+
+            $x = $this->currentPosition['x'] + (($this->currentSibling + $previousSibling) * 50);
+            $y = $this->currentPosition['y'] + ($this->currentGeneration * 50);
+            $text = SVGText::getInstance(
+                $x,
+                $y,
+                null,
+                $name,
+                new SVGStyle( array('fill'=>'blue', 'stroke' =>'black' ))
+            );
+            $this->treeImageSource->addShape($text);
+
+        };
+
+        $this->runLoop($callback, $this->tree, 0);
+        $this->treeImageSource->saveXML($filename);
+    }
+
+    private function runLoop($callback, $lineage, $previousSibling) {
         $this->currentGeneration++;
+
+        $this->currentSibling = 0;
         foreach ($lineage as $name => $children) {
-            $response = $callback($name, $children);
-            $showme = print_r($this->currentLine, true);
-            //echo $name . ' : ' . $this->currentGeneration . ' : ' . $showme . "\n";
+            $this->currentSibling++;
+            echo $name . ' : ' . $this->currentGeneration . ' : ' . $this->currentSibling . " : $previousSibling" . "\n";
+            $response = $callback($name, $children, $this->currentSibling);
             if ($response) {
                 return $response;
             } elseif (count($children)) {
                 $this->currentLine[$this->currentGeneration] = $name;
-                $response = $this->runLoop($callback, $children);
+                $response = $this->runLoop($callback, $children, $this->currentSibling);
                 if ($response) {
                     return $response;
                 } else {
@@ -112,4 +143,17 @@ class FamilyTree {
 }
 
 $family = new FamilyTree();
-var_dump($family->getMostProlific());
+var_dump($family->drawFamilyTree());
+
+
+/**
+ * $this->treeImageSource->addShape($text);
+$this->treeImageSource->addShape($line);$ids[$name] = uniqid();
+$text = SVGText::getInstance( 20, 20, $ids['blah'],'Bob', new SVGStyle( array('fill'=>'blue', 'stroke' =>'black' )));
+$style = new SVGStyle(); #create a style object
+#set fill and stroke
+$style->setFill( '#f2f2f2' );
+$style->setStroke( '#e1a100' );
+$style->setStrokeWidth( 2 );
+$line = SVGLine::getInstance(50, 50, 100, 100, null, $style);
+ */
