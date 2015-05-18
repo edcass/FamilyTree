@@ -73,7 +73,17 @@ class FamilyTree {
         return $this->list;
     }
 
-    public function getMostProlific() {}
+    public function getMostProlific() {
+        $this->searchedFor = 0;
+        $callback = function($name, $children) {
+            if (count($children) > $this->searchedFor) {
+                $this->searchedFor = count($children);
+                $this->list[0] = $name;
+            }
+        };
+        $this->runLoop($callback, $this->tree);
+        return $this->list[0];
+    }
 
     public function drawFamilyTree() {}
 
@@ -102,4 +112,4 @@ class FamilyTree {
 }
 
 $family = new FamilyTree();
-var_dump($family->getOnlyChildren());
+var_dump($family->getMostProlific());
