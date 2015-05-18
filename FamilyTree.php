@@ -11,7 +11,7 @@ class FamilyTree {
     private $tree = array();
     private $currentLine = array();
     private $currentGeneration = 0;
-    private $currentSibling = 0;
+    private $currentSibling = array();
     private $previousSibling = 0;
     private $searchedFor = '';
     private $list = array();
@@ -93,13 +93,13 @@ class FamilyTree {
         require_once('./lib/phpsvg-read-only/svglib/svglib.php');
         $filename = './images/' . uniqid() . '.svg'; // make sure you don't have file name collisions.
         $filename = './images/test.svg';
-        //unlink($filename);
+        unlink($filename);
         $this->treeImageSource = SVGDocument::getInstance();
 
 
         $callback = function($name, $children, $previousSibling) {
 
-            $x = $this->currentPosition['x'] + (($this->currentSibling + $previousSibling) * 50);
+            $x = $this->currentPosition['x'] + (($this->currentSibling[$this->currentGeneration] + $previousSibling) * 50);
             $y = $this->currentPosition['y'] + ($this->currentGeneration * 50);
             $text = SVGText::getInstance(
                 $x,
@@ -119,16 +119,16 @@ class FamilyTree {
     private function runLoop($callback, $lineage, $previousSibling) {
         $this->currentGeneration++;
 
-        $this->currentSibling = 0;
+        $this->currentSibling[$this->currentGeneration] = 0;
         foreach ($lineage as $name => $children) {
-            $this->currentSibling++;
-            echo $name . ' : ' . $this->currentGeneration . ' : ' . $this->currentSibling . " : $previousSibling" . "\n";
-            $response = $callback($name, $children, $this->currentSibling);
+            $this->currentSibling[$this->currentGeneration]++;
+            echo $name . ' : ' . $this->currentGeneration . ' : ' . $this->currentSibling[$this->currentGeneration] . " : $previousSibling" . "\n";
+            $response = $callback($name, $children, $previousSibling);
             if ($response) {
                 return $response;
             } elseif (count($children)) {
                 $this->currentLine[$this->currentGeneration] = $name;
-                $response = $this->runLoop($callback, $children, $this->currentSibling);
+                $response = $this->runLoop($callback, $children, $this->currentSibling[$this->currentGeneration]);
                 if ($response) {
                     return $response;
                 } else {
