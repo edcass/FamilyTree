@@ -1,0 +1,22 @@
+{
+  "Nancy": {
+    "Adam": {},
+    "Jill": {
+      "Kevin": {
+        "Samuel": {},
+        "George": {
+          "Patrick": {},
+          "Robert": {}
+        },
+        "James": {
+          "Mary": {}
+        },
+        "Aaron": {}
+      }
+    },
+    "Carl": {
+      "Cathrine": {},
+      "Joseph": {}
+    }
+  }
+}
