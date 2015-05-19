@@ -5,20 +5,23 @@
  * Date: 5/18/15
  * Time: 3:18 PM
  */
-
+require_once('../FamilyTree.php');
+chdir('../');
 class FamilyTreeTest extends PHPUnit_Framework_TestCase {
     public function testGetGrandParent() {
         $tests = array(
-            'Nancy' => array('Cathrine', 'Joseph', 'Kevin'),
+            'Nancy' => array('Cathrine', 'Kevin'),
             'Jill' => array('Samuel', 'George', 'James', 'Aaron')
         );
-        $familyTree = new FamilyTree();
+
         foreach ($tests as $grandparent => $grandkid) {
             foreach($grandkid as $kid) {
+                $familyTree = new FamilyTree();
                 $tested = $familyTree->getGrandParent($kid);
                 $this->assertEquals($tested, $grandparent);
             }
         }
+        exit;
     }
 
     public function testGetOnlyChildren() {
@@ -51,10 +54,10 @@ class FamilyTreeTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testDrawFamilyTree() {
-        $shouldBe = file_get_contents('../images/test.svg');
+        $shouldBe = file_get_contents('images/test.svg');
         $family = new FamilyTree();
         $filePath = $family->drawFamilyTree();
-        $is = file_get_contents('.' . $filePath); // prefix a dot to fix path.
+        $is = file_get_contents($filePath); // prefix a dot to fix path.
         $this->assertEquals($shouldBe, $is);
 
     }

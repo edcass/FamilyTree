@@ -144,6 +144,7 @@ class FamilyTree {
 
         $this->runLoop($callback, $this->tree, 0);
         $this->treeImageSource->saveXML($filename);
+        return $filename;
     }
 
     /**
@@ -223,3 +224,4 @@ class FamilyTree {
         return $this->runLoop($callback, $this->tree, 0);
     }
 }
+
