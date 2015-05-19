@@ -21,7 +21,6 @@ class FamilyTreeTest extends PHPUnit_Framework_TestCase {
                 $this->assertEquals($tested, $grandparent);
             }
         }
-        exit;
     }
 
     public function testGetOnlyChildren() {
