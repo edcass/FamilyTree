@@ -1,4 +1,4 @@
-+## Synopsis
+
 +
 +Tests are done with phpunit Installation instructions can be found here.
 + https://phpunit.de/manual/current/en/installation.html
